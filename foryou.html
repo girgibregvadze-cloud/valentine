@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Valentine 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body, html{font-family:'Poppins',sans-serif;height:100%;width:100%;overflow-x:hidden;background:url('https://media.giphy.com/media/3ohs4BSacFKI7A717y/giphy.gif') no-repeat center center fixed;background-size:cover;transition: background 1s;}
+/* LOGIN */
+#loginPage{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background-color:rgba(255,182,193,0.6);text-align:center;padding:20px;}
+#loginPage input{padding:12px;margin:10px 0;border-radius:10px;border:none;width:80%;font-size:1rem;text-align:center;}
+#loginPage button{padding:12px 25px;border:none;border-radius:10px;background:#ff4d6d;color:white;font-size:1.2rem;cursor:pointer;transition:0.3s;}
+#loginPage button:hover{background:#ff6699;}
+#errorMsg{color:red;margin-top:10px;font-weight:bold;}
+
+/* VALENTINE PAGE */
+#valentinePage{display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;background-color:rgba(255,182,193,0.3);padding:20px;position:relative;}
+#valentinePage h1{font-family:'Great Vibes',cursive;font-size:2.5rem;color:#fff;text-shadow:2px 2px #ff4d6d;margin-bottom:20px;text-align:center;}
+.buttons{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:30px;}
+.buttons button{padding:15px 30px;font-size:1.5rem;border:none;border-radius:12px;cursor:pointer;transition:all 0.3s ease;}
+#yesBtn{background:#ff6699;color:white;}
+#yesBtn:hover{transform:scale(1.1);}
+#noBtn{background:#ff4d4d;color:white;}
+#noBtn:hover{transform:scale(1.1);}
+
+/* GIF GALLERY */
+#gallery{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;margin-bottom:30px;}
+#gallery img{width:100px;height:100px;border-radius:12px;cursor:pointer;transition:transform 0.3s;}
+#gallery img:hover{transform:scale(1.2);}
+
+/* LOVE NOTES */
+#loveNotes{display:flex;flex-wrap:wrap;gap:15px;justify-content:center;margin-bottom:30px;}
+.loveNote{background:#ff99aa;color:white;padding:10px 15px;border-radius:12px;cursor:pointer;transition:transform 0.3s;font-weight:bold;}
+.loveNote:hover{transform:scale(1.1);}
+
+/* HEART POINTS */
+#points{font-size:1.5rem;color:#fff;margin-bottom:20px;text-shadow:1px 1px #ff4d6d;}
+
+/* SIDE INSTRUCTION */
+#instruction{
+  position:fixed;right:10px;top:50%;transform:translateY(-50%);
+  background:rgba(255,182,193,0.8);padding:10px 15px;border-radius:12px;color:#fff;font-weight:bold;
+  text-align:center;box-shadow:2px 2px 10px rgba(0,0,0,0.3);z-index:1000;font-size:0.9rem;
+}
+
+/* POPUP */
+#popup{
+  display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(255,182,193,0.95);border-radius:20px;padding:20px;text-align:center;z-index:9999;
+  animation:fadeIn 0.5s;width:80%;max-width:400px;
+}
+#popup img{width:200px;border-radius:20px;margin-top:10px;}
+#popup button{margin-top:15px;padding:10px 20px;border:none;border-radius:12px;background:#ff6699;color:white;font-size:1rem;cursor:pointer;}
+@keyframes fadeIn{0%{opacity:0}100%{opacity:1;}}
+
+/* FINAL PAGE */
+#finalPage{
+  display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center;padding:20px;color:#fff;font-family:'Great Vibes',cursive;font-size:2rem;
+  background:rgba(255,105,180,0.95);text-shadow:2px 2px #ff4d6d;
+}
+#finalPage img{width:200px;border-radius:20px;margin-top:20px;}
+
+/* MOBILE */
+@media(max-width:600px){
+  #valentinePage h1{font-size:2rem;}
+  .buttons button{font-size:1.2rem;padding:12px 25px;}
+  #gallery img{width:80px;height:80px;}
+  #popup img,#finalPage img{width:150px;}
+  #instruction{font-size:0.8rem;right:5px;}
+}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND MUSIC -->
+<audio id="bgMusic" autoplay loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<!-- CLICK SOUND -->
+<audio id="clickSound">
+  <source src="https://freesound.org/data/previews/522/522803_9669400-lq.mp3" type="audio/mpeg">
+</audio>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <h1 style="font-family: 'Great Vibes', cursive; font-size:3rem; color:#fff;">Secret Valentine 💖</h1>
+  <input type="text" id="nameInput" placeholder="Enter your name">
+  <button onclick="checkName()">Enter</button>
+  <p id="errorMsg"></p>
+</div>
+
+<!-- VALENTINE PAGE -->
+<div id="valentinePage">
+  <h1>Will you be my Valentine?</h1>
+  <div id="points">💖 Heart Points: <span id="score">0</span></div>
+  <div class="buttons">
+    <button id="yesBtn" onclick="yesClick()">YES 💖</button>
+    <button id="noBtn" onclick="noClick()">PLS 😅</button>
+  </div>
+
+  <h2 style="color:white;text-shadow:1px 1px #ff4d6d;margin-bottom:10px;">GIF Gallery</h2>
+  <div id="gallery">
+    <img src="https://media.giphy.com/media/l0HlOvJ7yaacpuSas/giphy.gif" onclick="addPoints(1)">
+    <img src="https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif" onclick="addPoints(2)">
+    <img src="https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif" onclick="addPoints(3)">
+  </div>
+
+  <h2 style="color:white;text-shadow:1px 1px #ff4d6d;margin-bottom:10px;">Love Notes 💌</h2>
+  <div id="loveNotes">
+    <div class="loveNote" onclick="addPoints(5)">"You make my heart skip a beat!"</div>
+    <div class="loveNote" onclick="addPoints(5)">"I love you more than chocolate!"</div>
+    <div class="loveNote" onclick="addPoints(5)">"Every moment with you is magic!"</div>
+  </div>
+</div>
+
+<!-- SIDE INSTRUCTION -->
+<div id="instruction">Click on the love notes 💌 to earn heart points!</div>
+
+<!-- POPUP MESSAGE -->
+<div id="popup">
+  <h2>Oh Mariam… you are my everything 💖</h2>
+  <p>Every little moment, every smile, every laugh with you makes my heart so full. I love you more than words can say. 🥰</p>
+  <img src="https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif">
+  <button onclick="closePopup()">Aww! Continue 💖</button>
+</div>
+
+<!-- FINAL PAGE -->
+<div id="finalPage">
+  <h2>Wow, Mariam! 💖</h2>
+  <p>It’s absolutely wonderful that you chose YES! Your choice makes my heart so happy 🥰</p>
+  <p>You just made the best decision ever, and I feel so lucky to have you 💕</p>
+  <img src="https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif">
+</div>
+
+<script>
+let score = 0;
+const targetScore = 100;
+let popupShown = false;
+
+// LOGIN
+function checkName(){
+  const name = document.getElementById('nameInput').value.toLowerCase().trim();
+  if(name === "mariam metskhovrishvili"){
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('valentinePage').style.display='flex';
+  } else {
+    document.getElementById('errorMsg').textContent="Wrong name, try again!";
+  }
+}
+
+// YES BUTTON
+const yesBtn = document.getElementById("yesBtn");
+function yesClick(){
+  playClick();
+  yesBtn.style.transition="all 1s ease";
+  yesBtn.style.position="fixed";
+  yesBtn.style.left=0;
+  yesBtn.style.top=0;
+  yesBtn.style.width="100vw";
+  yesBtn.style.height="100vh";
+  yesBtn.style.fontSize="5rem";
+  yesBtn.style.borderRadius=0;
+  yesBtn.style.zIndex=9999;
+  yesBtn.textContent="💖 LOVE 💖";
+  yesBtn.onclick=null;
+  addPoints(5);
+  setTimeout(showFinalPage,1000);
+}
+
+// FUNNY NO BUTTON
+const noBtn = document.getElementById("noBtn");
+const noTexts = ["PLS 😅","maybe later 😭","Not now 😢","huh? 😳","Nope 😆"];
+function noClick(){
+  playClick();
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+  noBtn.style.position="absolute";
+  noBtn.style.left=x+"px";
+  noBtn.style.top=y+"px";
+  noBtn.textContent = noTexts[Math.floor(Math.random()*noTexts.length)];
+}
+
+// HEART POINTS
+function addPoints(p){
+  playClick();
+  score += p;
+  document.getElementById('score').textContent = score;
+  if(score >= targetScore && !popupShown){
+    showPopup();
+  }
+}
+
+// CLICK SOUND
+function playClick(){
+  const sound = document.getElementById('clickSound');
+  sound.currentTime = 0;
+  sound.play();
+}
+
+// POPUP
+function showPopup(){
+  popupShown = true;
+  document.getElementById('popup').style.display='block';
+}
+function closePopup(){
+  document.getElementById('popup').style.display='none';
+  popupShown = false;
+}
+
+// FINAL PAGE
+function showFinalPage(){
+  document.getElementById('valentinePage').style.display='none';
+  document.getElementById('finalPage').style.display='flex';
+}
+</script>
+
+</body>
+</html>
+
